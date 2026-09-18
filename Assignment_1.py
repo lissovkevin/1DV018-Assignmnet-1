@@ -10,7 +10,21 @@ def threesum_brute(lst, sum=0):
                 triple = tuple(sorted((lst[i], lst[j], lst[k])))
                 if lst[i] + lst[j] + lst[k] == sum and triple not in sumZero:
                     sumZero.append((triple))
+    return sumZero
 
+
+def threesum_cache(lst, sum=0):
+    sumZero = []
+
+    for i in range(len(lst)):
+        seen = set()
+        for j in range(i + 1, len(lst)):
+            needed = sum - lst[i] - lst[j]
+            if needed in seen:
+                triple = tuple(sorted((lst[i], lst[j], needed)))
+                if triple not in sumZero:
+                    sumZero.append(triple)
+            seen.add(lst[j])
     return sumZero
 
 
@@ -21,3 +35,4 @@ for _ in range(3):
         random_lst.append(random.randint(-10 * n, 10 * n))
     print(random_lst)
     print(threesum_brute(random_lst))
+    print(threesum_cache(random_lst))
