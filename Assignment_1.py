@@ -1,5 +1,7 @@
 import random
 import time
+import matplotlib.pyplot as plt
+
 
 def threesum_brute(lst, sum=0):
     sumZero = []
@@ -55,3 +57,11 @@ for n in cache_sizes:
         end = time.time()
         cache_times[-1].append(end - start)
         print(f'{end - start:.10f}')
+
+plt.plot(brute_sizes, [rad[0] for rad in brute_times], label='Körning 1', color='blue')
+plt.plot(brute_sizes, [rad[1] for rad in brute_times], label='Körning 2', color='red')
+plt.plot(brute_sizes, [rad[2] for rad in brute_times], label='Körning 3', color='green')
+plt.xlabel('Brute Sizes')
+plt.ylabel('Brute times')
+plt.legend()
+plt.show()
