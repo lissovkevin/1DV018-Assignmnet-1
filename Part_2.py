@@ -146,125 +146,37 @@ def lin_reg(x, y):
     return m, k
 
 
+def generate_random_list(n, low=2000, high=10000):
+    random_lst = []
+    for _ in range(n):
+        random_lst.append(random.randint(low, high))
+    return random_lst
+
+
+def measure_times(sort_func, sizes, runs=3):
+    times = []
+    for n in sizes:
+        times.append([])
+        for _ in range(runs):
+            random_lst = generate_random_list(n)
+            start = time.time()
+            sort_func(random_lst)
+            end = time.time()
+            times[-1].append(end - start)
+    return times
+
+
 sort_sizes = list(range(2000, 10001, 571))
-merge_quick_sizes = list(range(100000, 2000000, 135714))
 
-selection_times = []
-for n in sort_sizes:
-    selection_times.append([])
-    for _ in range(3):
-        random_lst = []
-        for _ in range(n):
-            random_lst.append(random.randint(2000, 10000))
-        start = time.time()
-        result = selection_sort(random_lst)
-        end = time.time()
-        selection_times[-1].append(end - start)
-        print(f"selection n={n}: {end - start:.4f}")
-
-bubble_times = []
-for n in sort_sizes:
-    bubble_times.append([])
-    for _ in range(3):
-        random_lst = []
-        for _ in range(n):
-            random_lst.append(random.randint(2000, 10000))
-        start = time.time()
-        result = bubble_sort(random_lst)
-        end = time.time()
-        bubble_times[-1].append(end - start)
-        print(f"bubble n={n}: {end - start:.4f}")
-
-insertion_times = []
-for n in sort_sizes:
-    insertion_times.append([])
-    for _ in range(3):
-        random_lst = []
-        for _ in range(n):
-            random_lst.append(random.randint(2000, 10000))
-        start = time.time()
-        result = insertion_sort(random_lst)
-        end = time.time()
-        insertion_times[-1].append(end - start)
-        print(f"insertion n={n}: {end - start:.4f}")
+selection_times = measure_times(selection_sort, sort_sizes)
+bubble_times = measure_times(bubble_sort, sort_sizes)
+insertion_times = measure_times(insertion_sort, sort_sizes)
 
 selection_avg = [sum(rad) / len(rad) for rad in selection_times]
 bubble_avg = [sum(rad) / len(rad) for rad in bubble_times]
 insertion_avg = [sum(rad) / len(rad) for rad in insertion_times]
 
-
-merge_times = []
-for n in merge_quick_sizes:
-    merge_times.append([])
-    for _ in range(3):
-        random_lst = []
-        for _ in range(n):
-            random_lst.append(random.randint(2000, 10000))
-        start = time.time()
-        result = merge_sort(random_lst)
-        end = time.time()
-        merge_times[-1].append(end - start)
-        print(f'merge n={n}: {end - start:.4f}')
-
-quick_times = []
-for n in merge_quick_sizes:
-    quick_times.append([])
-    for _ in range(3):
-        random_lst = []
-        for _ in range(n):
-            random_lst.append(random.randint(2000, 10000))
-        start = time.time()
-        result = quick_sort(random_lst)
-        end = time.time()
-        quick_times[-1].append(end - start)
-        print(f'quick n={n}: {end - start:.4f}')
-
-merge_avg = [sum(rad) / len(rad) for rad in merge_times]
-quick_avg = [sum(rad) / len(rad) for rad in quick_times]
-
-plt.plot(merge_quick_sizes, merge_avg, '+', label='Merge Sort', color='purple')
-plt.plot(merge_quick_sizes, quick_avg, 'x', label='Quick Sort', color='orange')
-plt.xlabel('n (liststorlek)')
-plt.ylabel('Genomsnittlig körtid (s)')
-plt.title('Figure 1: Jämförelse O(n·log n) algoritmer')
-plt.legend()
-plt.show()
-
-log_n_mq = [math.log(n) for n in merge_quick_sizes]
-log_t_merge = [math.log(t) for t in merge_avg]
-log_t_quick = [math.log(t) for t in quick_avg]
-
-m_merge, k_merge = lin_reg(log_n_mq, log_t_merge)
-m_quick, k_quick = lin_reg(log_n_mq, log_t_quick)
-
-print(f'k_merge = {k_merge:.3f}')
-print(f'k_quick = {k_quick:.3f}')
-
-
-fitted_merge = [m_merge + k_merge * x for x in log_n_mq]
-fitted_quick = [m_quick + k_quick * x for x in log_n_mq]
-
-plt.scatter(log_n_mq, log_t_merge, marker='+', color='purple', label='Merge Sort')
-plt.scatter(log_n_mq, log_t_quick, marker='x', color='orange', label='Quick Sort')
-plt.plot(log_n_mq, fitted_merge, color='purple')
-plt.plot(log_n_mq, fitted_quick, color='orange')
-plt.xlabel('log(n)')
-plt.ylabel('log(körtid)')
-plt.title('Figure 2: Log-log plot för O(n·log n) algoritmer')
-plt.legend()
-plt.show()
-
-plt.plot(sort_sizes, selection_avg, "+", label="Selection Sort", color="red")
-plt.plot(sort_sizes, insertion_avg, "x", label="Insertion Sort", color="blue")
-plt.plot(sort_sizes, bubble_avg, "v", label="Bubble Sort", color="green")
-plt.xlabel("n (liststorlek)")
-plt.ylabel("Genomsnittlig körtid (s)")
-plt.title("Figure 1: Jämförelse O(n²) algoritmer")
-plt.legend()
-plt.show()
-
 log_n = [math.log(n) for n in sort_sizes]
-
 log_t_selection = [math.log(t) for t in selection_avg]
 log_t_bubble = [math.log(t) for t in bubble_avg]
 log_t_insertion = [math.log(t) for t in insertion_avg]
@@ -273,24 +185,95 @@ m_selection, k_selection = lin_reg(log_n, log_t_selection)
 m_bubble, k_bubble = lin_reg(log_n, log_t_bubble)
 m_insertion, k_insertion = lin_reg(log_n, log_t_insertion)
 
-print(f'k_selection = {k_selection:.3f}')
-print(f'k_bubble = {k_bubble:.3f}')
-print(f'k_insertion = {k_insertion:.3f}')
-
 fitted_selection = [m_selection + k_selection * x for x in log_n]
 fitted_bubble = [m_bubble + k_bubble * x for x in log_n]
 fitted_insertion = [m_insertion + k_insertion * x for x in log_n]
 
+print(f'k_selection = {k_selection:.3f}')
+print(f'k_bubble = {k_bubble:.3f}')
+print(f'k_insertion = {k_insertion:.3f}')
+
+
+merge_quick_sizes = list(range(100000, 2000000, 135714))
+
+merge_times = measure_times(merge_sort, merge_quick_sizes)
+quick_times = measure_times(quick_sort, merge_quick_sizes)
+bucket_times = measure_times(bucket_sort, merge_quick_sizes)
+radix_times = measure_times(radix_sort, merge_quick_sizes)
+
+merge_avg = [sum(rad) / len(rad) for rad in merge_times]
+quick_avg = [sum(rad) / len(rad) for rad in quick_times]
+bucket_avg = [sum(rad) / len(rad) for rad in bucket_times]
+radix_avg = [sum(rad) / len(rad) for rad in radix_times]
+
+log_n_mq = [math.log(n) for n in merge_quick_sizes]
+log_t_merge = [math.log(t) for t in merge_avg]
+log_t_quick = [math.log(t) for t in quick_avg]
+log_t_bucket = [math.log(t) for t in bucket_avg]
+log_t_radix = [math.log(t) for t in radix_avg]
+
+m_merge, k_merge = lin_reg(log_n_mq, log_t_merge)
+m_quick, k_quick = lin_reg(log_n_mq, log_t_quick)
+m_bucket, k_bucket = lin_reg(log_n_mq, log_t_bucket)
+m_radix, k_radix = lin_reg(log_n_mq, log_t_radix)
+
+fitted_merge = [m_merge + k_merge * x for x in log_n_mq]
+fitted_quick = [m_quick + k_quick * x for x in log_n_mq]
+fitted_bucket = [m_bucket + k_bucket * x for x in log_n_mq]
+fitted_radix = [m_radix + k_radix * x for x in log_n_mq]
+
+print(f'k_merge = {k_merge:.3f}')
+print(f'k_quick = {k_quick:.3f}')
+print(f'k_bucket = {k_bucket:.3f}')
+print(f'k_radix = {k_radix:.3f}')
+
+
+plt.plot(sort_sizes, selection_avg, "+", label="Selection Sort", color="red")
+plt.plot(sort_sizes, insertion_avg, "x", label="Insertion Sort", color="blue")
+plt.plot(sort_sizes, bubble_avg, "v", label="Bubble Sort", color="green")
+plt.xlabel("n (liststorlek)")
+plt.ylabel("Genomsnittlig körtid (s)")
+plt.title("Figure 1: Jämförelse O(n²) algoritmer")
+plt.legend()
+plt.savefig('figures/figure1_on2.png')
+plt.show()
+
 plt.scatter(log_n, log_t_selection, marker='+', color='red', label='Selection')
 plt.scatter(log_n, log_t_insertion, marker='x', color='blue', label='Insertion')
 plt.scatter(log_n, log_t_bubble, marker='v', color='green', label='Bubble')
-
 plt.plot(log_n, fitted_selection, color='red')
 plt.plot(log_n, fitted_insertion, color='blue')
 plt.plot(log_n, fitted_bubble, color='green')
-
 plt.xlabel('log(n)')
 plt.ylabel('log(körtid)')
 plt.title('Figure 2: Log-log plot för O(n²) algoritmer')
 plt.legend()
+plt.savefig('figures/figure2_on2_loglog.png')
+plt.show()
+
+
+plt.plot(merge_quick_sizes, merge_avg, '+', label='Merge Sort', color='purple')
+plt.plot(merge_quick_sizes, quick_avg, 'x', label='Quick Sort', color='orange')
+plt.plot(merge_quick_sizes, bucket_avg, 'v', label='Bucket Sort', color='brown')
+plt.plot(merge_quick_sizes, radix_avg, 'o', label='Radix Sort', color='pink')
+plt.xlabel('n (liststorlek)')
+plt.ylabel('Genomsnittlig körtid (s)')
+plt.title('Figure 1: Jämförelse Merge/Quick/Bucket/Radix')
+plt.legend()
+plt.savefig('figures/figure1_onlogn.png')
+plt.show()
+
+plt.scatter(log_n_mq, log_t_merge, marker='+', color='purple', label='Merge Sort')
+plt.scatter(log_n_mq, log_t_quick, marker='x', color='orange', label='Quick Sort')
+plt.scatter(log_n_mq, log_t_bucket, marker='v', color='brown', label='Bucket Sort')
+plt.scatter(log_n_mq, log_t_radix, marker='o', color='pink', label='Radix Sort')
+plt.plot(log_n_mq, fitted_merge, color='purple')
+plt.plot(log_n_mq, fitted_quick, color='orange')
+plt.plot(log_n_mq, fitted_bucket, color='brown')
+plt.plot(log_n_mq, fitted_radix, color='pink')
+plt.xlabel('log(n)')
+plt.ylabel('log(körtid)')
+plt.title('Figure 2: Log-log alla fyra algoritmer')
+plt.legend()
+plt.savefig('figures/figure2_onlogn_loglog.png')
 plt.show()

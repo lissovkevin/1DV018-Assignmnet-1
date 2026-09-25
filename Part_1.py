@@ -91,6 +91,7 @@ plt.xlabel("Brute Sizes")
 plt.ylabel("Brute times")
 plt.title("Figure 1 Brute")
 plt.legend()
+plt.savefig('figures/figure1_brute.png')
 plt.show()
 
 brute_avg = [sum(rad) / len(rad) for rad in brute_times]
@@ -99,6 +100,7 @@ plt.plot(brute_sizes, brute_avg)
 plt.xlabel("Brute Sizes")
 plt.ylabel("Averege brute time")
 plt.title("Figure 1a Avg Brute")
+plt.savefig('figures/figure1_brute_avg.png')
 plt.show()
 
 plt.plot(cache_sizes, [rad[1] for rad in cache_times], label="Körning 2", color="red")
@@ -108,6 +110,7 @@ plt.xlabel("Cache Sizes")
 plt.ylabel("Cache times")
 plt.title("Figure 1 Cache")
 plt.legend()
+plt.savefig('figures/figure1_cache.png')
 plt.show()
 
 cache_avg = [sum(rad) / len(rad) for rad in cache_times]
@@ -116,6 +119,7 @@ plt.plot(cache_sizes, cache_avg)
 plt.xlabel("Cache Sizes")
 plt.ylabel("Averege cache time")
 plt.title("Figure 1 Avg Cache")
+plt.savefig('figures/figure1_cache_avg.png')
 plt.show()
 
 
@@ -148,6 +152,7 @@ plt.xlabel("log(n)")
 plt.ylabel("log(körtid)")
 plt.title("Figure 2b - Brute")
 plt.legend()
+plt.savefig('figures/figure2b_brute.png')
 plt.show()
 
 fitted_cache = [m_cache + k_cache * x for x in log_n_cache]
@@ -157,4 +162,5 @@ plt.xlabel("log(n)")
 plt.ylabel("log(körtid)")
 plt.title("Figure 2b - Cache")
 plt.legend()
+plt.savefig('figures/figure2b_cache.png')
 plt.show()
